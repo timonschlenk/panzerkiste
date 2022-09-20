@@ -14,6 +14,7 @@ class Tank {
         this.trackLeft.play("track1");
 
         this.angleToRadiant = this.hull.angle*Math.PI/180;
+        this.framecount = 12;
     }
 
     update (){
@@ -41,6 +42,8 @@ class Tank {
 
         this.trackLeft.framerateChange = 0;
         this.trackRight.framerateChange = 0;
+
+        this.framecount++;
     }
 
     moveForward(){
@@ -102,6 +105,10 @@ class Tank {
             this.trackLeft.framerateChange -= 10;
             this.trackRight.framerateChange += 24;
         }
+    }
+
+    getFrontOfGun(){
+        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*180, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*180}
     }
     
 }
