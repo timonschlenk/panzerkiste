@@ -24,9 +24,7 @@ pages.forEach((page) => {
 });
 
 //creates server on localhost:PORT
-server.listen(PORT, () => {
-  console.log(`listening on port: ${PORT}`);
-});
+server.listen(process.env.PORT || 5000);
 
 //important stuff happens here
 //get executed when client creates instance of io()
