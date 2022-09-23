@@ -39,9 +39,17 @@ function update (){
 	tank.update();
 
 	if (cursors.left.isDown || keys.a.isDown){
-		tank.rotateLeft();
+		if(cursors.down.isDown || keys.s.isDown){
+			tank.rotateRight();
+		} else {
+			tank.rotateLeft();
+		}
 	} if (cursors.right.isDown || keys.d.isDown){
-		tank.rotateRight();
+		if(cursors.down.isDown || keys.s.isDown){
+			tank.rotateLeft();
+		} else {
+			tank.rotateRight();
+		}
 	} if (cursors.up.isDown || keys.w.isDown){
 		tank.moveForward();
 	} if(cursors.down.isDown || keys.s.isDown){
