@@ -39,13 +39,13 @@ function update (){
 	tank.update();
 
 	if (cursors.left.isDown || keys.a.isDown){
-		if(cursors.down.isDown || keys.s.isDown){
+		if((cursors.down.isDown || keys.s.isDown)&&!(cursors.up.isDown || keys.w.isDown)){
 			tank.rotateRight();
 		} else {
 			tank.rotateLeft();
 		}
 	} if (cursors.right.isDown || keys.d.isDown){
-		if(cursors.down.isDown || keys.s.isDown){
+		if((cursors.down.isDown || keys.s.isDown)&&!(cursors.up.isDown || keys.w.isDown)){
 			tank.rotateLeft();
 		} else {
 			tank.rotateRight();
