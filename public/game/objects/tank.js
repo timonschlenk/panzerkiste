@@ -1,13 +1,15 @@
 class Tank {
-    constructor(game, x, y){
+    constructor(game, x, y, sizePX){
         this.game = game;
 
-        this.trackRight = new Track(game, x, y, "Track_1_A");
-        this.trackLeft = new Track(game, x, y, "Track_1_A");
+        this.size = sizePX / 256
+
+        this.trackRight = new Track(game, x, y, "Track_1_A", this.size);
+        this.trackLeft = new Track(game, x, y, "Track_1_A", this.size);
         this.tracks = [this.trackRight, this.trackLeft];
-        this.hull = new Hull(game, x, y, "Hull_01");
-        this.gun = new Gun(game, x, y, "Gun_01");
-        this.tankParts = [this.hull, this.gun, this.trackLeft, this.trackRight];
+        this.hull = new Hull(game, x, y, "Hull_01", this.size);
+        this.gun = new Gun(game, x, y, "Gun_01", this.size);
+        this.tankParts = [this.gun, this.trackLeft, this.trackRight];
         this.offsetOld = {x: 0, y: 0};
 
         this.trackRight.play("track1");
@@ -35,9 +37,9 @@ class Tank {
             }
         }
     
-        this.addOffset(this.gun, offsetRelative, 40);
-        this.addOffset(this.trackRight, {x: offsetRelative.y, y: offsetRelative.x*-1}, 70);
-        this.addOffset(this.trackLeft, {x: offsetRelative.y, y: offsetRelative.x*-1}, -70);
+        this.addOffset(this.gun, offsetRelative, 40 * this.size);
+        this.addOffset(this.trackRight, {x: offsetRelative.y, y: offsetRelative.x*-1}, 70* this.size);
+        this.addOffset(this.trackLeft, {x: offsetRelative.y, y: offsetRelative.x*-1}, -70* this.size);
         this.offsetOld = {x: offset.x, y: offset.y};
 
         this.trackLeft.framerateChange = 0;
@@ -46,18 +48,25 @@ class Tank {
         this.framecount++;
     }
 
+    setPosition(object, factor, offset){
+        object.x = this.hull.x + offset.x *factor;
+        object.y = this.hull.y - offset.y *factor;
+    }
+
     moveForward(){
-        this.tankParts.forEach(tankPart => {
-            this.move(tankPart, this.angleToRadiant, 4);
-        });
+        this.move(this.hull, this.angleToRadiant, 6*this.size);
+        this.setPosition(this.gun, this.size*40, {x: Math.sin(this.angleToRadiant)*-1, y: Math.cos(this.angleToRadiant)*-1});
+        this.setPosition(this.trackLeft, this.size * 70, {y: Math.sin(this.angleToRadiant)*-1, x: Math.cos(this.angleToRadiant)});
+        this.setPosition(this.trackRight, this.size * -70, {y: Math.sin(this.angleToRadiant)*-1, x: Math.cos(this.angleToRadiant)});
         this.trackLeft.framerateChange += 24;
         this.trackRight.framerateChange += 24;
     }
 
     moveBackward(){
-        this.tankParts.forEach(tankPart => {
-            this.move(tankPart, this.angleToRadiant, -3);
-        });
+        this.move(this.hull, this.angleToRadiant, -4*this.size);
+        this.setPosition(this.gun, this.size*40, {x: Math.sin(this.angleToRadiant)*-1, y: Math.cos(this.angleToRadiant)*-1});
+        this.setPosition(this.trackLeft, this.size * 70, {y: Math.sin(this.angleToRadiant)*-1, x: Math.cos(this.angleToRadiant)});
+        this.setPosition(this.trackRight, this.size * -70, {y: Math.sin(this.angleToRadiant)*-1, x: Math.cos(this.angleToRadiant)});
         this.trackLeft.framerateChange -= 10;
         this.trackRight.framerateChange -= 10;
     }
@@ -108,7 +117,7 @@ class Tank {
     }
 
     getFrontOfGun(){
-        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*180, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*180}
+        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*180*this.size, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*180*this.size}
     }
     
 }

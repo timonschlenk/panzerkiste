@@ -12,7 +12,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, projectiles;
+var cursors, keys, pointer, tank, projectiles, size;
 
 var game = new Phaser.Game(config);
 
@@ -30,7 +30,8 @@ function create (){
 	pointer = this.input.activePointer;
 	cursors = this.input.keyboard.createCursorKeys();
 	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32});
-	tank = new Tank(this, 1000, 500);
+	size = (this.sys.game.canvas.width+ this.sys.game.canvas.height)/20;
+	tank = new Tank(this, this.sys.game.canvas.width/2, this.sys.game.canvas.height/2, size);
 	projectiles = new Array();
 
 }
@@ -38,13 +39,13 @@ function create (){
 function update (){
 	tank.update();
 
-	if (cursors.left.isDown || keys.a.isDown){
+	if ((cursors.left.isDown || keys.a.isDown)&&!(cursors.right.isDown || keys.d.isDown)){
 		if((cursors.down.isDown || keys.s.isDown)&&!(cursors.up.isDown || keys.w.isDown)){
 			tank.rotateRight();
 		} else {
 			tank.rotateLeft();
 		}
-	} if (cursors.right.isDown || keys.d.isDown){
+	} if ((cursors.right.isDown || keys.d.isDown)&&!(cursors.left.isDown || keys.a.isDown)){
 		if((cursors.down.isDown || keys.s.isDown)&&!(cursors.up.isDown || keys.w.isDown)){
 			tank.rotateLeft();
 		} else {
@@ -56,8 +57,8 @@ function update (){
 		tank.moveBackward();
 	}
 
-	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 12){
-		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, "Medium_Shell", tank.gun.angle));
+	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24){
+		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, "Medium_Shell", tank.gun.angle, size));
 		tank.framecount = 0;
 	}
 }

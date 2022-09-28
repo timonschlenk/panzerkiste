@@ -1,14 +1,12 @@
-const PORT = 3000; // Sets the output port
+const PORT = 5000; // Sets the output port
 
 const express = require("express");
-const session = require('express-session');
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const path = require("path");
-
 
 //necessairy to load script and css files without type mismatch even if in right path
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -24,7 +22,9 @@ pages.forEach((page) => {
 });
 
 //creates server on localhost:PORT
-server.listen(process.env.PORT || 5000);
+server.listen((process.env.PORT || PORT), () => {
+  console.log(`listening on port: ${PORT}`);
+});
 
 //important stuff happens here
 //get executed when client creates instance of io()
@@ -34,3 +34,4 @@ io.on("connection", (socket) => {
     let ip = socket.handshake.address;
   });
 });
+
