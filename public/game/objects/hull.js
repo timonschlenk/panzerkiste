@@ -5,7 +5,6 @@ class Hull extends Phaser.GameObjects.Sprite {
         this.setOrigin(0.5, 0.5);
         this.setScale(size, size);
         game.physics.add.existing(this);
-        this.body.debug = true;
         this.body.collideWorldBounds = true;
     }
 }
