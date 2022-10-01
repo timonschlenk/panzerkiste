@@ -80,7 +80,7 @@ class Tank {
     
     //rotate gun, so that it's facing mousepointer
     calculateGunAnlge(){
-        let mousePosition = {x: this.game.input.mousePointer.x, y: this.game.input.mousePointer.y};
+        let mousePosition = {x: this.game.input.activePointer.worldX, y: this.game.input.activePointer.worldY};
         let relativeMousePosition = {x: mousePosition.x-this.gun.x, y: mousePosition.y-this.gun.y};
         let anglePositive = Math.atan(relativeMousePosition.y / relativeMousePosition.x)*180/Math.PI + 90
         if (relativeMousePosition.x < 0){
@@ -120,5 +120,5 @@ class Tank {
         this.addOffset(this.trackRight, {x: offset.y, y: offset.x*-1}, 70* this.size);
         this.addOffset(this.trackLeft, {x: offset.y, y: offset.x*-1}, -70* this.size);
     }
-    
+      
 }

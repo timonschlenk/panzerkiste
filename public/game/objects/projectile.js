@@ -1,26 +1,28 @@
-class Projectile extends Phaser.GameObjects.Sprite {
-    constructor(game, x, y, image, angle, size) {
-        super(game, x, y, image, angle);
+class Projectile extends Phaser.Physics.Arcade.Sprite {
+    constructor(game, x=500, y=500) {
+        super(game, x, y, "Medium_Shell");
         game.add.existing(this);
         this.setOrigin(0.5, 0.5);
-        this.angle = angle;
+
+        this.angle = 0;
         game.physics.add.existing(this);
         this.body.setSize(25,25);
+    }
+
+    fire(x, y, angle, size){
+        this.body.reset(x, y);
+        this.angle = angle;
+        console.log(angle);
+        this.setScale(size, size);
         this.body.velocity.x = Math.sin(this.angle*Math.PI/180)*size*800;
         this.body.velocity.y = -Math.cos(this.angle*Math.PI/180)*size*800;
-        this.setScale(size, size);
-        this.body.collideWorldBounds = true;
-        this.body.onWorldBounds = true;
 
-        this.body.world.on('worldbounds', (body) => {
-            if (body.gameObject === this) {
-                if(body.touching.up || body.touching.down || body.touching.right){
-                    console.log("hello")
-                }
-                this.angle = -this.angle;
-                this.body.velocity.x = Math.sin(this.angle*Math.PI/180)*size*800;
-                this.body.velocity.y = -Math.cos(this.angle*Math.PI/180)*size*800;
-            }
-        }, this);
+        this.setActive(true);
+        this.setVisible(true);
+
+        setTimeout( () => {
+            this.setActive(false);
+            this.setVisible(false);
+        }, 5000)
     }
 }
