@@ -1,5 +1,5 @@
 class Tank {
-    constructor(game, x, y, size){
+    constructor(game, x, y, size, color){
         this.size = size;
         this.game = game;
 
@@ -7,8 +7,8 @@ class Tank {
         this.trackLeft = new Track(game, x, y, "Track_1_A", size);
         this.tracks = [this.trackRight, this.trackLeft];
 
-        this.hull = new Hull(game, x, y, "Hull_01", size);
-        this.gun = new Gun(game, x, y, "Gun_01", size);
+        this.hull = new Hull(game, x, y, "Hull_01_"+ color, size);
+        this.gun = new Gun(game, x, y, "Gun_01_" + color, size);
 
 
         this.trackRight.play("track1");
@@ -58,14 +58,14 @@ class Tank {
 
     //called in update when "w" is pushed
     moveForward(){
-        this.move(this.hull, this.angle, 400*this.size);
+        this.move(this.hull, this.angle, 600*this.size);
         this.trackLeft.framerateChange += 24;
         this.trackRight.framerateChange += 24;
     }
 
     //called in update when "s" is pushed
     moveBackward(){
-        this.move(this.hull, this.angle, -300*this.size);
+        this.move(this.hull, this.angle, -500*this.size);
         this.trackLeft.framerateChange -= 10;
         this.trackRight.framerateChange -= 10;
     }

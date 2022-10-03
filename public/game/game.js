@@ -15,15 +15,21 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, projectileGroup, tank2, map, tileset, backgroundLayer, collisionLayer;
+var cursors, keys, pointer, tank, size, projectileGroup, tank2, tank3, tank4, map, tileset, backgroundLayer, collisionLayer;
 
 var game = new Phaser.Game(config);
 
 
 function preload (){
 	this.load.path = "/public/assets/";
-	this.load.image("Hull_01", "Hulls_Color_A/Hull_01.png");
-	this.load.image("Gun_01", "Weapon_Color_A/Gun_01.png");
+	this.load.image("Hull_01_A", "Hulls_Color_A/Hull_01.png");
+	this.load.image("Gun_01_A", "Weapon_Color_A/Gun_01.png");
+	this.load.image("Hull_01_B", "Hulls_Color_B/Hull_01.png");
+	this.load.image("Gun_01_B", "Weapon_Color_B/Gun_01.png");
+	this.load.image("Hull_01_C", "Hulls_Color_C/Hull_01.png");
+	this.load.image("Gun_01_C", "Weapon_Color_C/Gun_01.png");
+	this.load.image("Hull_01_D", "Hulls_Color_D/Hull_01.png");
+	this.load.image("Gun_01_D", "Weapon_Color_D/Gun_01.png");
 	this.load.image("Medium_Shell", "Effects/Medium_Shell.png");
 	this.load.spritesheet("Track_1_A", "Tracks/Track_1_A.png", { frameWidth: 42, frameHeight: 246 });
 	this.load.image("tiles", "tilesExtruded.png")
@@ -44,20 +50,21 @@ function create (){
 	cursors = this.input.keyboard.createCursorKeys();
 	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32});
 	size = (64/256);
-	tank = new Tank(this, this.sys.game.canvas.width/4, this.sys.game.canvas.height/2, size);
-	tank2 = new Tank(this, this.sys.game.canvas.width/2, this.sys.game.canvas.height/2, size);
+	tank = new Tank(this, 1000, 400, size, "A");
+	tank2 = new Tank(this, 300, 800, size, "B");
+	tank3 = new Tank(this, 200, 200, size, "C");
+	tank4 = new Tank(this, 1500, 1000, size, "D");
 	projectileGroup = new ProjectileGroup(this);
 
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	this.cameras.main.startFollow(tank);
 	this.cameras.main.zoom = 1.2;
-	//this.cameras.main.setRoundPixels(true);
 
 	this.physics.add.collider(tank2.hull, level);
 	this.physics.add.collider(tank.hull, level);
 	this.physics.add.collider(projectileGroup, tank2.hull, bulletHitsTank);
-	this.physics.add.collider(projectileGroup, level);
+	this.physics.add.collider(projectileGroup, level, bulletHitsWall);
 	this.physics.add.collider(tank.hull, tank2.hull);
 	
 
@@ -92,6 +99,8 @@ function update (){
 	tank.update();
 	tank.updateGunAngle();
 	tank2.update();
+	tank3.update();
+	tank4.update();
 }
 
 function calculateScale(gameHeight, gameWidth){
@@ -113,4 +122,8 @@ function getRelativePositionToCanvas(gameObject, camera) {
 
 function bulletHitsTank(tank, bullet){
 	bullet.destroy();
+}
+
+function bulletHitsWall(bullet, wall){
+	bullet.reflect();
 }
