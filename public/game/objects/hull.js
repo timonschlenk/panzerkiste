@@ -5,5 +5,7 @@ class Hull extends Phaser.Physics.Arcade.Sprite {
         this.setOrigin(0.5, 0.5);
         this.setScale(size, size);
         game.physics.add.existing(this);
+
+        this.body.setSize(180, 180);
     }
 }

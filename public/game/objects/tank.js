@@ -19,12 +19,18 @@ class Tank {
         this.y = this.hull.y;
 
         this.framecount = 12;
+        this.resitance = 0.8;
+        this.health = 5;
+    }
+
+    updateGunAngle(){
+        this.gun.angle = this.calculateGunAnlge();
     }
 
     //called every frame in update
-    update (){
-        //rotate gun, so that it's facing mousepointer
-        this.gun.angle = this.calculateGunAnlge();
+    update(){
+
+        this.applyResistance(this.resitance);
 
         //Managing how fast the tracks change frame
         for (let i = 0; i < 2; i++){
@@ -52,14 +58,14 @@ class Tank {
 
     //called in update when "w" is pushed
     moveForward(){
-        this.move(this.hull, this.angle, 6*this.size);
+        this.move(this.hull, this.angle, 400*this.size);
         this.trackLeft.framerateChange += 24;
         this.trackRight.framerateChange += 24;
     }
 
     //called in update when "s" is pushed
     moveBackward(){
-        this.move(this.hull, this.angle, -4*this.size);
+        this.move(this.hull, this.angle, -300*this.size);
         this.trackLeft.framerateChange -= 10;
         this.trackRight.framerateChange -= 10;
     }
@@ -80,7 +86,7 @@ class Tank {
     
     //rotate gun, so that it's facing mousepointer
     calculateGunAnlge(){
-        let mousePosition = {x: this.game.input.activePointer.worldX, y: this.game.input.activePointer.worldY};
+        let mousePosition = this.getMouseCoords();
         let relativeMousePosition = {x: mousePosition.x-this.gun.x, y: mousePosition.y-this.gun.y};
         let anglePositive = Math.atan(relativeMousePosition.y / relativeMousePosition.x)*180/Math.PI + 90
         if (relativeMousePosition.x < 0){
@@ -92,8 +98,8 @@ class Tank {
     
     //move sprite in a direction (angle) with a velocity pixels/frame determined by factor
     move(sprite, angle, factor){
-        sprite.x += Math.sin(angle) * factor;
-        sprite.y -= Math.cos(angle) * factor;
+        sprite.body.velocity.x = Math.sin(angle) * factor;
+        sprite.body.velocity.y = -Math.cos(angle) * factor;
     }
     
     //reset the sprites position and then add offset
@@ -119,6 +125,26 @@ class Tank {
         this.addOffset(this.gun, offset, -40 * this.size);
         this.addOffset(this.trackRight, {x: offset.y, y: offset.x*-1}, 70* this.size);
         this.addOffset(this.trackLeft, {x: offset.y, y: offset.x*-1}, -70* this.size);
+    }
+
+    getMouseCoords() {
+        // Takes a Camera and updates this Pointer's worldX and worldY values so they are the result of a translation through the given Camera.
+        this.game.input.activePointer.updateWorldPoint(this.game.cameras.main);
+        let pointer = this.game.input.activePointer
+        return {
+          x: pointer.worldX,
+          y: pointer.worldY,
+        }
+    }
+
+    applyResistance(resistance){
+        this.hull.body.velocity.x *= resistance;
+        this.hull.body.velocity.y *= resistance;
+    }
+
+    destroy(){
+        this.setActive(false);
+        this.setVisible(false);
     }
       
 }

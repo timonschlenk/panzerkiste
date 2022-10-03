@@ -6,7 +6,7 @@ var config = {
 		default: 'arcade',
 		arcade: {
             debug: false
-        }
+		}
 	},
 	scene: {
 		preload: preload,
@@ -15,7 +15,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, projectileGroup;
+var cursors, keys, pointer, tank, size, projectileGroup, tank2, map, tileset, backgroundLayer, collisionLayer;
 
 var game = new Phaser.Game(config);
 
@@ -33,21 +33,34 @@ function preload (){
 function create (){
 	projectilesGroup = this.physics.add.group();
 
-	const map = this.make.tilemap({key:"map", tileWidth: 32, tileHeight: 32});
-	const tileset = map.addTilesetImage("tiles1", "tiles", 32, 32, 1, 2);
-	const backgroundLayer = map.createLayer("Background", tileset, 0, 0);
-	const collisionLayer = map.createLayer("Collision", tileset, 0, 0);
+	map = this.make.tilemap({key:"map", tileWidth: 32, tileHeight: 32});
+	tileset = map.addTilesetImage("tiles1", "tiles", 32, 32, 1, 2);
+	level = map.createLayer("level", tileset, 0, 0);
+
+	map.setCollisionByProperty({ collision: true });
+
 
 	pointer = this.input.activePointer;
 	cursors = this.input.keyboard.createCursorKeys();
 	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32});
 	size = (64/256);
-	tank = new Tank(this, this.sys.game.canvas.width/2, this.sys.game.canvas.height/2, size);
+	tank = new Tank(this, this.sys.game.canvas.width/4, this.sys.game.canvas.height/2, size);
+	tank2 = new Tank(this, this.sys.game.canvas.width/2, this.sys.game.canvas.height/2, size);
 	projectileGroup = new ProjectileGroup(this);
+
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	this.cameras.main.startFollow(tank);
 	this.cameras.main.zoom = 1.2;
+	//this.cameras.main.setRoundPixels(true);
+
+	this.physics.add.collider(tank2.hull, level);
+	this.physics.add.collider(tank.hull, level);
+	this.physics.add.collider(projectileGroup, tank2.hull, bulletHitsTank);
+	this.physics.add.collider(projectileGroup, level);
+	this.physics.add.collider(tank.hull, tank2.hull);
+	
+
 
 }
 
@@ -65,9 +78,9 @@ function update (){
 		} else {
 			tank.rotateRight();
 		}
-	} if (cursors.up.isDown || keys.w.isDown){
+	} if (!(cursors.down.isDown || keys.s.isDown)&&(cursors.up.isDown || keys.w.isDown)){
 		tank.moveForward();
-	} if(cursors.down.isDown || keys.s.isDown){
+	} if ((cursors.down.isDown || keys.s.isDown)&&!(cursors.up.isDown || keys.w.isDown)){
 		tank.moveBackward();
 	}
 
@@ -77,6 +90,8 @@ function update (){
 	}
 
 	tank.update();
+	tank.updateGunAngle();
+	tank2.update();
 }
 
 function calculateScale(gameHeight, gameWidth){
@@ -95,4 +110,7 @@ function getRelativePositionToCanvas(gameObject, camera) {
 	  	y: (gameObject.y - camera.worldView.y) * camera.zoom
 	}
 }
-  
+
+function bulletHitsTank(tank, bullet){
+	bullet.destroy();
+}

@@ -7,12 +7,18 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.angle = 0;
         game.physics.add.existing(this);
         this.body.setSize(25,25);
+        this.destroyTimeout = setTimeout( () => {
+            this.destroy();
+        }, 5000);
+        
     }
 
     fire(x, y, angle, size){
+
+        clearTimeout(this.destroyTimeout);
+
         this.body.reset(x, y);
         this.angle = angle;
-        console.log(angle);
         this.setScale(size, size);
         this.body.velocity.x = Math.sin(this.angle*Math.PI/180)*size*800;
         this.body.velocity.y = -Math.cos(this.angle*Math.PI/180)*size*800;
@@ -20,9 +26,13 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.setActive(true);
         this.setVisible(true);
 
-        setTimeout( () => {
-            this.setActive(false);
-            this.setVisible(false);
-        }, 5000)
+        this.destroyTimeout = setTimeout( () => {
+            this.destroy();
+        }, 5000);
+    }
+
+    destroy(){
+        this.setActive(false);
+        this.setVisible(false);
     }
 }
