@@ -15,7 +15,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, projectileGroup, tank2, tank3, tank4, map, tileset, backgroundLayer, collisionLayer;
+var cursors, keys, pointer, tank, size, projectileGroup, tank2, tank3, tank4, map, tileset, backgroundLayer, collisionLayer, tanks;
 
 var game = new Phaser.Game(config);
 
@@ -51,9 +51,7 @@ function create (){
 	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32});
 	size = (64/256);
 	tank = new Tank(this, 1000, 400, size, "A");
-	tank2 = new Tank(this, 300, 800, size, "B");
-	tank3 = new Tank(this, 200, 200, size, "C");
-	tank4 = new Tank(this, 1500, 1000, size, "D");
+	tanks = [new Tank(this, 300, 800, size, "B"), new Tank(this, 200, 200, size, "C"), new Tank(this, 1500, 1000, size, "D")]
 	projectileGroup = new ProjectileGroup(this);
 
 
@@ -61,11 +59,15 @@ function create (){
 	this.cameras.main.startFollow(tank);
 	this.cameras.main.zoom = 1.2;
 
-	this.physics.add.collider(tank2.hull, level);
+	tanks.forEach( bot => {
+		this.physics.add.collider(bot.hull, level);
+		this.physics.add.collider(tank.hull, bot.hull);
+		this.physics.add.collider(projectileGroup, bot.hull, bulletHitsTank);
+	});
+
 	this.physics.add.collider(tank.hull, level);
-	this.physics.add.collider(projectileGroup, tank2.hull, bulletHitsTank);
 	this.physics.add.collider(projectileGroup, level, bulletHitsWall);
-	this.physics.add.collider(tank.hull, tank2.hull);
+	this.physics.add.collider(projectileGroup, tank.hull, bulletHitsTank);
 	
 
 
@@ -98,9 +100,10 @@ function update (){
 
 	tank.update();
 	tank.updateGunAngle();
-	tank2.update();
-	tank3.update();
-	tank4.update();
+	
+	tanks.forEach( bot => {
+		bot.update();
+	})
 }
 
 function calculateScale(gameHeight, gameWidth){
