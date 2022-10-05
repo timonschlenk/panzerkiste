@@ -3,9 +3,10 @@ var config = {
 	width: window.innerWidth,
 	height: window.innerHeight,
 	physics: {
-		default: 'arcade',
-		arcade: {
-            debug: false
+		default: 'matter',
+		matter: {
+            debug: true,
+			gravity: {y:0}
 		}
 	},
 	scene: {
@@ -15,7 +16,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, projectileGroup, tank2, tank3, tank4, map, tileset, backgroundLayer, collisionLayer, tanks;
+var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles;
 
 var game = new Phaser.Game(config);
 
@@ -37,39 +38,32 @@ function preload (){
 }
 
 function create (){
-	projectilesGroup = this.physics.add.group();
-
 	map = this.make.tilemap({key:"map", tileWidth: 32, tileHeight: 32});
 	tileset = map.addTilesetImage("tiles1", "tiles", 32, 32, 1, 2);
 	level = map.createLayer("level", tileset, 0, 0);
-
 	map.setCollisionByProperty({ collision: true });
+	this.matter.world.convertTilemapLayer(level);
 
 
 	pointer = this.input.activePointer;
 	cursors = this.input.keyboard.createCursorKeys();
 	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32});
 	size = (64/256);
-	tank = new Tank(this, 1000, 400, size, "A");
-	tanks = [new Tank(this, 300, 800, size, "B"), new Tank(this, 200, 200, size, "C"), new Tank(this, 1500, 1000, size, "D")]
-	projectileGroup = new ProjectileGroup(this);
 
+	projectiles = new Array();
+
+	tank = new Tank(this, 1000, 400, size, "A", "player");
+	tanks = [new Tank(this, 300, 800, size, "B", "bot1"), new Tank(this, 200, 200, size, "C", "bot2"), new Tank(this, 1500, 1000, size, "D", "bot3")];
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	this.cameras.main.startFollow(tank);
 	this.cameras.main.zoom = 1.2;
 
-	tanks.forEach( bot => {
-		this.physics.add.collider(bot.hull, level);
-		this.physics.add.collider(tank.hull, bot.hull);
-		this.physics.add.collider(projectileGroup, bot.hull, bulletHitsTank);
-	});
-
-	this.physics.add.collider(tank.hull, level);
-	this.physics.add.collider(projectileGroup, level, bulletHitsWall);
-	this.physics.add.collider(projectileGroup, tank.hull, bulletHitsTank);
-	
-
+	this.matter.world.on("collisionstart", (event, bodyA, bodyB) => {
+        console.log(event);
+		console.log(bodyA);
+		console.log(bodyB);
+    });
 
 }
 
@@ -94,7 +88,7 @@ function update (){
 	}
 
 	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24){
-		projectileGroup.fire(tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size);
+		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `${projectiles.length}`));
 		tank.framecount = 0;
 	}
 

@@ -1,27 +1,28 @@
-class Projectile extends Phaser.Physics.Arcade.Sprite {
-    constructor(game, x=500, y=500) {
-        super(game, x, y, "Medium_Shell");
+class Projectile extends Phaser.Physics.Matter.Sprite {
+    constructor(game, x, y, angle, size, label) {
+        super(game.matter.world, x, y, "Medium_Shell", 0, {scale: {x:1, y: 1}});
         game.add.existing(this);
-        this.setOrigin(0.5, 0.5);
 
-        this.angle = 0;
-        game.physics.add.existing(this);
-        this.body.setSize(25,25)
+        this.setBody({type:"rectangle", width: 15, height:28}, {label: label, chamfer: {radius: [5, 5, 5, 5] } });
+
+        this.setOrigin(0.5, 0.5);
+        this.angle = angle;
+        this.setScale(size*1.6, size*1.6);
+        this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
+        this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
+        this.setFrictionAir(0);
         this.destroyTimeout = setTimeout( () => {
             this.destroy();
-        }, 5000);
+        }, 8000);
         
     }
 
-    fire(x, y, angle, size){
+    fire(){
 
         clearTimeout(this.destroyTimeout);
 
         this.body.reset(x, y);
-        this.angle = angle;
-        this.setScale(size*1.6, size*1.6);
-        this.body.velocity.x = Math.sin(this.angle*Math.PI/180)*size*1000;
-        this.body.velocity.y = -Math.cos(this.angle*Math.PI/180)*size*1000;
+        
 
         this.setActive(true);
         this.setVisible(true);
@@ -32,8 +33,8 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
     }
 
     destroy(){
-        this.setActive(false);
-        this.setVisible(false);
+        //this.setActive(false);
+       // this.setVisible(false);
     }
 
     reflect(){
@@ -44,7 +45,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
             this.angle += 180;
         }
 
-        this.body.velocity.x = Math.sin(this.angle*Math.PI/180)*size*1000;
-        this.body.velocity.y = -Math.cos(this.angle*Math.PI/180)*size*1000;
+        this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
+        this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
     }
 }

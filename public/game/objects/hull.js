@@ -1,10 +1,12 @@
-class Hull extends Phaser.Physics.Arcade.Sprite {
-    constructor(game, x, y, image, size) {
-        super(game, x, y, image);
+class Hull extends Phaser.Physics.Matter.Sprite {
+    constructor(game, x, y, image, size, label) {
+        super(game.matter.world, x, y, image);
         game.add.existing(this);
+
+        this.setBody({type: "rectangle", width:190, height:230 }, {label: label, chamfer: {radius: [30, 30, 30, 30]}});
+
         this.setOrigin(0.5, 0.5);
         this.setScale(size, size);
-        game.physics.add.existing(this);
-        this.body.setCircle(120, 10, 10);
+        this.setFrictionAir(0.1);
     }
 }

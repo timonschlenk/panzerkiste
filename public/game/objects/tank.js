@@ -1,5 +1,5 @@
 class Tank {
-    constructor(game, x, y, size, color){
+    constructor(game, x, y, size, color, label){
         this.size = size;
         this.game = game;
 
@@ -7,7 +7,7 @@ class Tank {
         this.trackLeft = new Track(game, x, y, "Track_1_A", size);
         this.tracks = [this.trackRight, this.trackLeft];
 
-        this.hull = new Hull(game, x, y, "Hull_01_"+ color, size);
+        this.hull = new Hull(game, x, y, "Hull_01_"+ color, size, label);
         this.gun = new Gun(game, x, y, "Gun_01_" + color, size);
 
 
@@ -58,14 +58,14 @@ class Tank {
 
     //called in update when "w" is pushed
     moveForward(){
-        this.move(this.hull, this.angle, 600*this.size);
+        this.move(this.hull, this.angle, 8*this.size);
         this.trackLeft.framerateChange += 24;
         this.trackRight.framerateChange += 24;
     }
 
     //called in update when "s" is pushed
     moveBackward(){
-        this.move(this.hull, this.angle, -500*this.size);
+        this.move(this.hull, this.angle, -6*this.size);
         this.trackLeft.framerateChange -= 10;
         this.trackRight.framerateChange -= 10;
     }
@@ -98,10 +98,11 @@ class Tank {
     
     //move sprite in a direction (angle) with a velocity pixels/frame determined by factor
     move(sprite, angle, factor){
-        sprite.body.velocity.x = Math.sin(angle) * factor;
-        sprite.body.velocity.y = -Math.cos(angle) * factor;
+        sprite.setVelocityX(Math.sin(angle)*factor);
+        sprite.setVelocityY(-Math.cos(angle)*factor);
+        //sprite.setVelocity({x: Math.sin(angle)*factor, y: -Math.cos(angle)*factor});
+        //sprite.setVelocity({x: 0.1, y:0.1});
     }
-    
     //reset the sprites position and then add offset
     addOffset(sprite, offset, factor){
         sprite.x = this.hull.x;
@@ -112,7 +113,7 @@ class Tank {
 
     //called when fireing a bullet
     getFrontOfGun(){
-        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*180*this.size, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*180*this.size}
+        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*200*this.size, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*200*this.size}
     }
 
     //reseting core parameters of tankparts to those of hull and adding the right offset
@@ -138,8 +139,8 @@ class Tank {
     }
 
     applyResistance(resistance){
-        this.hull.body.velocity.x *= resistance;
-        this.hull.body.velocity.y *= resistance;
+        //this.hull.body.velocity.x *= resistance;
+        //this.hull.body.velocity.y *= resistance;
     }
 
     destroy(){

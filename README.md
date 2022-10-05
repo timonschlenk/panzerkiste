@@ -3,10 +3,11 @@
 ## Bugs
 
 1. Tracks move when hull is colliding
-2. Circle Collision box not accurate
+2. Circle Collision box not accurate - change to matter.js
 3. Tank Images are slightly broken
-4. Tanks can be pushed into walls
+4. Tanks can be pushed into walls - change to matter.js
 5. When fired inside a tank, bullet doesn't work
+6. Fix occasional bleeding without making tank wobble (happens when using round pixels) - maybe use two cameras to render
 
 ## Features
 

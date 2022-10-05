@@ -1,4 +1,4 @@
-class ProjectileGroup extends Phaser.Physics.Arcade.Group {
+/*class ProjectileGroup extends Phaser.Physics.Matter.Group {
     constructor(game) {
         super(game.physics.world, game);
 
@@ -17,4 +17,4 @@ class ProjectileGroup extends Phaser.Physics.Arcade.Group {
             projectile.fire(x, y, angle, size);
         }
     }
-}
+}*/
