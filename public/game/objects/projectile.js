@@ -1,5 +1,5 @@
 class Projectile extends Phaser.Physics.Matter.Sprite {
-    constructor(game, x, y, angle, size, label) {
+    constructor(game, x, y, angle, size, label, level) {
         super(game.matter.world, x, y, "Medium_Shell", 0, {scale: {x:1, y: 1}});
         game.add.existing(this);
 
@@ -14,7 +14,20 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
         this.destroyTimeout = setTimeout( () => {
             this.destroy();
         }, 8000);
+        this.setBounce(1);
+        this.setFixedRotation();
         
+        this.setOnCollide( (data) => {
+            console.log(data)
+            console.log(data.collision.normal)
+            let vector = data.collision.normal;
+            this.angle *= -1;
+            if(vector.y == 1 || vector.y == -1){
+                this.angle += 180;
+            }
+            this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
+            this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
+        })
     }
 
     fire(){

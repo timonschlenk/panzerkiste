@@ -16,8 +16,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles;
-
+var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles, borders, shapes;
 var game = new Phaser.Game(config);
 
 
@@ -35,6 +34,8 @@ function preload (){
 	this.load.spritesheet("Track_1_A", "Tracks/Track_1_A.png", { frameWidth: 42, frameHeight: 246 });
 	this.load.image("tiles", "tilesExtruded.png")
 	this.load.tilemapTiledJSON("map", "panzerkiste.json");
+	this.load.image("transparent", "transparents.png");
+	this.load.json("shapes", "shapes.json");
 }
 
 function create (){
@@ -42,8 +43,13 @@ function create (){
 	tileset = map.addTilesetImage("tiles1", "tiles", 32, 32, 1, 2);
 	level = map.createLayer("level", tileset, 0, 0);
 	map.setCollisionByProperty({ collision: true });
-	this.matter.world.convertTilemapLayer(level);
+	//this.matter.world.convertTilemapLayer(level);
 
+	shapes = this.cache.json.get('shapes');
+
+	borders = new Array();
+	addBorders(this);
+	
 
 	pointer = this.input.activePointer;
 	cursors = this.input.keyboard.createCursorKeys();
@@ -57,13 +63,7 @@ function create (){
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	this.cameras.main.startFollow(tank);
-	this.cameras.main.zoom = 1.2;
-
-	this.matter.world.on("collisionstart", (event, bodyA, bodyB) => {
-        console.log(event);
-		console.log(bodyA);
-		console.log(bodyB);
-    });
+	this.cameras.main.zoom = 0.7;
 
 }
 
@@ -88,7 +88,7 @@ function update (){
 	}
 
 	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24){
-		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `${projectiles.length}`));
+		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${projectiles.length}`, level));
 		tank.framecount = 0;
 	}
 
@@ -123,4 +123,17 @@ function bulletHitsTank(tank, bullet){
 
 function bulletHitsWall(bullet, wall){
 	bullet.reflect();
+}
+
+function addBorders(game){
+	console.log(shapes)
+	shapesResized = shapes;
+	for(i = 0; i < shapes.level.fixtures[0].vertices.length; i++){
+		for(j = 0; j < shapes.level.fixtures[0].vertices[i].length; j++){
+			shapesResized.level.fixtures[0].vertices[i][j].x *= 32;
+			shapesResized.level.fixtures[0].vertices[i][j].y *= 32;
+		}
+	}
+	console.log(shapesResized)
+	borders.push(game.matter.add.sprite(700, 500, "transparent", 0, {shape: shapesResized.level}))
 }
