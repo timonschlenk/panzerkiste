@@ -5,7 +5,6 @@
 1. Tank Images are slightly broken
 2. Fix occasional bleeding without making tank wobble (happens when using round pixels) - maybe use two cameras to render
 3. Bullet can be fired inside collision box
-4. Bullet doesn't reflect correctly between tile collission boxes
 
 ## Features
 
@@ -17,3 +16,4 @@
 6. Add minimapp or pointer to other tanks
 7. Add Tank AI
 8. Add Multiplayer
+9. Add a limit to bullets and how make them only reflect once

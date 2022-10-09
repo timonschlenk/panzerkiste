@@ -5,7 +5,7 @@ var config = {
 	physics: {
 		default: 'matter',
 		matter: {
-            debug: true,
+            debug: false,
 			gravity: {y:0}
 		}
 	},
@@ -16,7 +16,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles, borders, shapes;
+var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles, border, shapes;
 var game = new Phaser.Game(config);
 
 
@@ -46,8 +46,6 @@ function create (){
 	//this.matter.world.convertTilemapLayer(level);
 
 	shapes = this.cache.json.get('shapes');
-
-	borders = new Array();
 	addBorders(this);
 	
 
@@ -63,7 +61,7 @@ function create (){
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	this.cameras.main.startFollow(tank);
-	this.cameras.main.zoom = 0.7;
+	this.cameras.main.zoom = calculateScale(this.sys.game.canvas.width, this.sys.game.canvas.height)*2.5;
 
 }
 
@@ -117,14 +115,6 @@ function getRelativePositionToCanvas(gameObject, camera) {
 	}
 }
 
-function bulletHitsTank(tank, bullet){
-	bullet.destroy();
-}
-
-function bulletHitsWall(bullet, wall){
-	bullet.reflect();
-}
-
 function addBorders(game){
 	console.log(shapes)
 	shapesResized = shapes;
@@ -135,5 +125,6 @@ function addBorders(game){
 		}
 	}
 	console.log(shapesResized)
-	borders.push(game.matter.add.sprite(700, 500, "transparent", 0, {shape: shapesResized.level}))
+	border = game.matter.add.sprite(963, 610, "transparent", 0, {shape: shapesResized.level});
+	border.setStatic(true);
 }
