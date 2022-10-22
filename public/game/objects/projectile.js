@@ -4,7 +4,7 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
         game.add.existing(this);
 
         this.setBody({type:"rectangle", width: 15, height:28}, {label: label, chamfer: {radius: [5, 5, 5, 5] } });
-
+        this.bounces = 0;
         this.setOrigin(0.5, 0.5);
         this.angle = angle;
         this.setScale(size*1.6, size*1.6);
@@ -18,15 +18,36 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
         this.setFixedRotation();
         
         this.setOnCollide( (data) => {
-            console.log(data)
-            console.log(data.collision.normal)
+            //console.log(data)
+            //console.log(data.collision.normal)
+
             let vector = data.collision.normal;
-            this.angle *= -1;
-            if(vector.y == 1 || vector.y == -1){
-                this.angle += 180;
+            let body;
+            if(data.bodyA.label.slice(0,-2) === "projectile"){
+                body = data.bodyB;
+            } else {
+                body = data.bodyA;
             }
-            this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
-            this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
+
+            if(body.label == "level-fixture"){
+                this.angle *= -1;
+                if(vector.y === 1 || vector.y === -1){
+                    this.angle += 180;
+                }
+                this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
+                this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
+                if(this.bounces === 1){
+                    this.explode();
+                }
+                this.bounces++;
+            } else if (body.label.slice(0, -1) === "bot" || body.label === "player"){
+                if(body.health == null){
+                    body.health = 4;
+                } else {
+                    body.health--;
+                }
+                this.explode();
+            }
         })
     }
 
@@ -45,11 +66,6 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
         }, 8000);
     }
 
-    destroy(){
-        //this.setActive(false);
-       // this.setVisible(false);
-    }
-
     reflect(){
         if(this.body.blocked.right || this.body.blocked.left){
             this.angle *= -1;
@@ -60,5 +76,9 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
 
         this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
         this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
+    }
+
+    explode(){
+        this.destroy();   
     }
 }

@@ -21,39 +21,48 @@ class Tank {
         this.framecount = 12;
         this.resitance = 0.8;
         this.health = 5;
+        this.destroyed = false;
     }
 
     updateGunAngle(){
-        this.gun.angle = this.calculateGunAnlge();
+        if(!this.destroyed){
+            this.gun.angle = this.calculateGunAnlge();
+        }
     }
 
     //called every frame in update
     update(){
+        if(!this.destroyed){
+            this.applyResistance(this.resitance);
 
-        this.applyResistance(this.resitance);
-
-        //Managing how fast the tracks change frame
-        for (let i = 0; i < 2; i++){
-            if(this.tracks[i].framerateChange != 0){
-                if(!this.tracks[i].anims.isPlaying){
-                    this.tracks[i].play("track1");
+            //Managing how fast the tracks change frame
+            for (let i = 0; i < 2; i++){
+                if(this.tracks[i].framerateChange != 0){
+                    if(!this.tracks[i].anims.isPlaying){
+                        this.tracks[i].play("track1");
+                    }
+                    this.tracks[i].anims.msPerFrame = 500/Math.abs(this.tracks[i].framerateChange);
+                } else {
+                    this.tracks[i].anims.stop()
                 }
-                this.tracks[i].anims.msPerFrame = 500/Math.abs(this.tracks[i].framerateChange);
-            } else {
-                this.tracks[i].anims.stop()
+            }
+            this.trackLeft.framerateChange = 0;
+            this.trackRight.framerateChange = 0;
+            this.framecount++;
+            
+            //updating core properties of tank
+            this.angle = this.hull.angle*Math.PI/180;
+            this.x = this.hull.x;
+            this.y = this.hull.y;
+
+            //moving other tankParts than hull to the position of hull and giving them the correct angle and offset
+            this.adjustTankparts();
+            //console.log(this.hull)
+            if(this.hull.body.health === 0){
+                this.destroy();
+                this.destroyed = true;
             }
         }
-        this.trackLeft.framerateChange = 0;
-        this.trackRight.framerateChange = 0;
-        this.framecount++;
-        
-        //updating core properties of tank
-        this.angle = this.hull.angle*Math.PI/180;
-        this.x = this.hull.x;
-        this.y = this.hull.y;
-
-        //moving other tankParts than hull to the position of hull and giving them the correct angle and offset
-        this.adjustTankparts();
     }
 
     //called in update when "w" is pushed
@@ -142,10 +151,11 @@ class Tank {
         //this.hull.body.velocity.x *= resistance;
         //this.hull.body.velocity.y *= resistance;
     }
-
+    
     destroy(){
-        this.setActive(false);
-        this.setVisible(false);
+        this.hull.destroy();
+        this.trackLeft.destroy();
+        this.trackRight.destroy();
+        this.gun.destroy();
     }
-      
 }

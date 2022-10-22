@@ -5,7 +5,7 @@ var config = {
 	physics: {
 		default: 'matter',
 		matter: {
-            debug: false,
+            debug: true,
 			gravity: {y:0}
 		}
 	},
@@ -57,6 +57,7 @@ function create (){
 	projectiles = new Array();
 
 	tank = new Tank(this, 1000, 400, size, "A", "player");
+	console.log(tank)
 	tanks = [new Tank(this, 300, 800, size, "B", "bot1"), new Tank(this, 200, 200, size, "C", "bot2"), new Tank(this, 1500, 1000, size, "D", "bot3")];
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -116,7 +117,6 @@ function getRelativePositionToCanvas(gameObject, camera) {
 }
 
 function addBorders(game){
-	console.log(shapes)
 	shapesResized = shapes;
 	for(i = 0; i < shapes.level.fixtures[0].vertices.length; i++){
 		for(j = 0; j < shapes.level.fixtures[0].vertices[i].length; j++){
@@ -124,7 +124,6 @@ function addBorders(game){
 			shapesResized.level.fixtures[0].vertices[i][j].y *= 32;
 		}
 	}
-	console.log(shapesResized)
 	border = game.matter.add.sprite(963, 610, "transparent", 0, {shape: shapesResized.level});
 	border.setStatic(true);
 }
