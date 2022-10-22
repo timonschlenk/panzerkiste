@@ -1,7 +1,11 @@
 class Projectile extends Phaser.Physics.Matter.Sprite {
     constructor(game, x, y, angle, size, label, level) {
-        super(game.matter.world, x, y, "Medium_Shell", 0, {scale: {x:1, y: 1}});
+        super(game.matter.world, x, y, "Bullet", 0, {scale: {x:1, y: 1}});
         game.add.existing(this);
+        this.explosion = this.anims.create({key:"explosion", frames: this.anims.generateFrameNumbers("Bullet", {start:0, end: 7}), frameRate:24, repeat: 0});
+        this.shot = this.anims.create({key:"shot", frames: this.anims.generateFrameNumbers("Bullet", {start:8, end: 11}), frameRate:24, repeat: 0});
+        //this.play("shot")
+        this.setFrame(11);
 
         this.setBody({type:"rectangle", width: 15, height:28}, {label: label, chamfer: {radius: [5, 5, 5, 5] } });
         this.bounces = 0;
@@ -11,12 +15,8 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
         this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
         this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
         this.setFrictionAir(0);
-        this.destroyTimeout = setTimeout( () => {
-            this.destroy();
-        }, 8000);
         this.setBounce(1);
         this.setFixedRotation();
-        
         this.setOnCollide( (data) => {
             //console.log(data)
             //console.log(data.collision.normal)
@@ -36,7 +36,7 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
                 }
                 this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
                 this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
-                if(this.bounces === 1){
+                if(this.bounces === 2){
                     this.explode();
                 }
                 this.bounces++;
@@ -46,6 +46,8 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
                 } else {
                     body.health--;
                 }
+                this.explode();
+            } else {
                 this.explode();
             }
         })
@@ -79,6 +81,12 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
     }
 
     explode(){
-        this.destroy();   
+        this.setVelocityX(0);
+        this.setVelocityY(0);
+        this.play("explosion")
+        window.setTimeout(() => {
+            this.destroy();
+        },334)
+        console.log(this)
     }
 }

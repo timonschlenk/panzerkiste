@@ -5,7 +5,7 @@ var config = {
 	physics: {
 		default: 'matter',
 		matter: {
-            debug: true,
+            debug: false,
 			gravity: {y:0}
 		}
 	},
@@ -30,7 +30,7 @@ function preload (){
 	this.load.image("Gun_01_C", "Weapon_Color_C/Gun_01.png");
 	this.load.image("Hull_01_D", "Hulls_Color_D/Hull_01.png");
 	this.load.image("Gun_01_D", "Weapon_Color_D/Gun_01.png");
-	this.load.image("Medium_Shell", "Effects/Medium_Shell.png");
+	this.load.spritesheet("Bullet", "Effects/bulletspritesheet.png", { frameWidth: 128, frameHeight: 128});
 	this.load.spritesheet("Track_1_A", "Tracks/Track_1_A.png", { frameWidth: 42, frameHeight: 246 });
 	this.load.image("tiles", "tilesExtruded.png")
 	this.load.tilemapTiledJSON("map", "panzerkiste.json");
@@ -55,9 +55,9 @@ function create (){
 	size = (64/256);
 
 	projectiles = new Array();
+	counter = 0;
 
 	tank = new Tank(this, 1000, 400, size, "A", "player");
-	console.log(tank)
 	tanks = [new Tank(this, 300, 800, size, "B", "bot1"), new Tank(this, 200, 200, size, "C", "bot2"), new Tank(this, 1500, 1000, size, "D", "bot3")];
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -86,9 +86,17 @@ function update (){
 		tank.moveBackward();
 	}
 
-	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24){
-		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${projectiles.length}`, level));
+	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24 && projectiles.length < 5){
+		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, level));
+		counter++;
+		console.log(projectiles)
 		tank.framecount = 0;
+	}
+
+	for (i = 0; i < projectiles.length; i++){
+		if(!projectiles[i].active){
+			projectiles.splice(i,1);
+		}
 	}
 
 	tank.update();
