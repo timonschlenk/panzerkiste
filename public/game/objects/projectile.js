@@ -14,11 +14,16 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
         this.setScale(size*1.6, size*1.6);
         this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
         this.setVelocityY(-Math.cos(this.angle*Math.PI/180)*size*15);
+       /* window.setTimeout( () => {
+            let correctAngle = Math.atan((this.body.velocity.x/size/15)/(-this.body.velocity.y/size/15))/Math.PI*180
+            console.log(correctAngle)
+            this.angle = correctAngle
+        },100)*/
         this.setFrictionAir(0);
         this.setBounce(1);
         this.setFixedRotation();
         this.setOnCollide( (data) => {
-            //console.log(data)
+            console.log(data)
             //console.log(data.collision.normal)
 
             let vector = data.collision.normal;
@@ -31,7 +36,8 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
 
             if(body.label == "level-fixture"){
                 this.angle *= -1;
-                if(vector.y === 1 || vector.y === -1){
+                console.log(vector)
+                if(vector.y === -1 || vector.y === 1){
                     this.angle += 180;
                 }
                 this.setVelocityX(Math.sin(this.angle*Math.PI/180)*size*15);
@@ -83,10 +89,9 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
     explode(){
         this.setVelocityX(0);
         this.setVelocityY(0);
-        this.play("explosion")
+        this.play("explosion");
         window.setTimeout(() => {
             this.destroy();
         },334)
-        console.log(this)
     }
 }

@@ -30,12 +30,15 @@ function preload (){
 	this.load.image("Gun_01_C", "Weapon_Color_C/Gun_01.png");
 	this.load.image("Hull_01_D", "Hulls_Color_D/Hull_01.png");
 	this.load.image("Gun_01_D", "Weapon_Color_D/Gun_01.png");
+	this.load.spritesheet("Health", "Effects/healthbar.png", { frameWidth: 68, frameHeight: 16});
 	this.load.spritesheet("Bullet", "Effects/bulletspritesheet.png", { frameWidth: 128, frameHeight: 128});
 	this.load.spritesheet("Track_1_A", "Tracks/Track_1_A.png", { frameWidth: 42, frameHeight: 246 });
 	this.load.image("tiles", "tilesExtruded.png")
 	this.load.tilemapTiledJSON("map", "panzerkiste.json");
 	this.load.image("transparent", "transparents.png");
 	this.load.json("shapes", "shapes.json");
+	this.load.atlas('explosion', 'Effects/explosion.png', 'Effects/explosion.json');
+	this.load.image("tiretracks", "Effects/Tire_Track_01.png");
 }
 
 function create (){
@@ -62,7 +65,7 @@ function create (){
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	this.cameras.main.startFollow(tank);
-	this.cameras.main.zoom = calculateScale(this.sys.game.canvas.width, this.sys.game.canvas.height)*2.5;
+	this.cameras.main.zoom = calculateScale(this.sys.game.canvas.height, this.sys.game.canvas.width)*1.5;
 
 }
 
@@ -86,7 +89,7 @@ function update (){
 		tank.moveBackward();
 	}
 
-	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24 && projectiles.length < 5){
+	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24 && projectiles.length < 5 && !tank.destroyed){
 		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, level));
 		counter++;
 		console.log(projectiles)
@@ -108,13 +111,7 @@ function update (){
 }
 
 function calculateScale(gameHeight, gameWidth){
-	let height = gameHeight/1280;
-	let width = gameWidth/1920;
-	if (height < width){
-		return height;
-	} else {
-		return width;
-	}
+	return (gameHeight/1260+gameWidth/1920)/2
 }
 
 function getRelativePositionToCanvas(gameObject, camera) {
