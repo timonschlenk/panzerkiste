@@ -51,9 +51,9 @@ class Tank {
         });
     }
 
-    updateGunAngle(){
+    updateGunAngle(player, posPlayer){
         if(!this.destroyed){
-            this.gun.angle = this.calculateGunAnlge();
+            this.gun.angle = this.calculateGunAnlge(player, posPlayer);
         }
     }
 
@@ -73,9 +73,9 @@ class Tank {
                     this.tracks[i].anims.stop()
                     this.tracks[i].emitter.stop()
                 }
+                this.tracks[i].update(this.hull.angle, this.tracks[0].framerateChange, this.tracks[1].framerateChange);
+                this.tracks[i].framerateChange = 0;
             }
-            this.trackLeft.framerateChange = 0;
-            this.trackRight.framerateChange = 0;
             this.framecount++;
             
             //updating core properties of tank
@@ -111,8 +111,8 @@ class Tank {
     moveBackward(){
         if(!this.destroyed){
             this.move(this.hull, this.angle, -6*this.size);
-            this.trackLeft.framerateChange -= 10;
-            this.trackRight.framerateChange -= 10;
+            this.trackLeft.framerateChange -= 24;
+            this.trackRight.framerateChange -= 24;
         }
     }
 
@@ -121,7 +121,7 @@ class Tank {
         if(!this.destroyed){
             this.hull.angle += 3;
             this.trackLeft.framerateChange -= 10;
-            this.trackRight.framerateChange += 24;
+            this.trackRight.framerateChange += 10;
         }
     }
 
@@ -129,15 +129,20 @@ class Tank {
     rotateLeft(){
         if(!this.destroyed){
             this.hull.angle -= 3;
-            this.trackLeft.framerateChange += 24;
+            this.trackLeft.framerateChange += 10;
             this.trackRight.framerateChange -= 10;
         }
     }
     
     //rotate gun, so that it's facing mousepointer
-    calculateGunAnlge(){
+    calculateGunAnlge(player, posPlayer){
         if(!this.destroyed){
-            let mousePosition = this.getMouseCoords();
+            let mousePosition
+            if(player){
+                mousePosition = this.getMouseCoords();
+            } else {
+                mousePosition = posPlayer;
+            }
             let relativeMousePosition = {x: mousePosition.x-this.gun.x, y: mousePosition.y-this.gun.y};
             let anglePositive = Math.atan(relativeMousePosition.y / relativeMousePosition.x)*180/Math.PI + 90
             if (relativeMousePosition.x < 0){

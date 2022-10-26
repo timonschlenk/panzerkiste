@@ -16,7 +16,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles, border, shapes;
+var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles, border, shapes, projectilesBots, counterBots;
 var game = new Phaser.Game(config);
 
 
@@ -46,7 +46,7 @@ function create (){
 	tileset = map.addTilesetImage("tiles1", "tiles", 32, 32, 1, 2);
 	level = map.createLayer("level", tileset, 0, 0);
 	map.setCollisionByProperty({ collision: true });
-	//this.matter.world.convertTilemapLayer(level);
+	//this.matter.world.a(level);
 
 	shapes = this.cache.json.get('shapes');
 	addBorders(this);
@@ -60,8 +60,15 @@ function create (){
 	projectiles = new Array();
 	counter = 0;
 
+	projectilesBots = new Array();
+	counterBots = new Array();
+
 	tank = new Tank(this, 1000, 400, size, "A", "player");
 	tanks = [new Tank(this, 300, 800, size, "B", "bot1"), new Tank(this, 200, 200, size, "C", "bot2"), new Tank(this, 1500, 1000, size, "D", "bot3")];
+	tanks.forEach(tank => {
+		projectilesBots.push(new Array());
+		counterBots.push(0);
+	})
 
 	this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	this.cameras.main.startFollow(tank);
@@ -70,7 +77,19 @@ function create (){
 }
 
 function update (){
+	//player gets updated and player controls are being handled here
+	tankControls(this)
+	tank.update();
+	tank.updateGunAngle(true);
+	
 
+	tanks.forEach( bot => {
+		bot.update();
+		bot.updateGunAngle(false, {x: tank.x, y: tank.y});
+	})
+}
+
+function tankControls(game){
 	if ((cursors.left.isDown || keys.a.isDown)&&!(cursors.right.isDown || keys.d.isDown)){
 		if((cursors.down.isDown || keys.s.isDown)&&!(cursors.up.isDown || keys.w.isDown)){
 			tank.rotateRight();
@@ -90,7 +109,7 @@ function update (){
 	}
 
 	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24 && projectiles.length < 5 && !tank.destroyed){
-		projectiles.push(new Projectile(this, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, level));
+		projectiles.push(new Projectile(game, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, level));
 		counter++;
 		console.log(projectiles)
 		tank.framecount = 0;
@@ -101,13 +120,6 @@ function update (){
 			projectiles.splice(i,1);
 		}
 	}
-
-	tank.update();
-	tank.updateGunAngle();
-	
-	tanks.forEach( bot => {
-		bot.update();
-	})
 }
 
 function calculateScale(gameHeight, gameWidth){
