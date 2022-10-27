@@ -4,9 +4,13 @@ class Hull extends Phaser.Physics.Matter.Sprite {
         game.add.existing(this);
 
         this.setBody({type: "rectangle", width:190, height:230 }, {label: label, chamfer: {radius: [30, 30, 30, 30]}});
-
+        this.size = size;
         this.setOrigin(0.5, 0.5);
         this.setScale(size, size);
         this.setFrictionAir(0.1);
+    }
+
+    upgrade(type){
+        this.setFrame(type);
     }
 }

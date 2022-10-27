@@ -33,11 +33,9 @@ class Track extends Phaser.GameObjects.Sprite {
         let angle = (angleDeg-90)*Math.PI/180
         let framerateChange = framerateChange1 + framerateChange2
         if(framerateChange < -10){
-            this.emitter.followOffset = {x: Math.cos(angle)*30, y: Math.sin(angle)*30};
-        } else if(framerateChange > 10){
-            this.emitter.followOffset = {x: Math.cos(angle)*-30, y: Math.sin(angle)*-30};
+            this.emitter.followOffset = {x: Math.cos(angle)*25, y: Math.sin(angle)*25};
         } else {
-            this.emitter.followOffset = {x:0, y:0};
+            this.emitter.followOffset = {x: Math.cos(angle)*-25, y: Math.sin(angle)*-25};
         }
     }
     

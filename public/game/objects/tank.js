@@ -2,13 +2,14 @@ class Tank {
     constructor(game, x, y, size, color, label){
         this.size = size;
         this.game = game;
+        this.type = 0;
 
         this.trackRight = new Track(game, x, y, "Track_1_A", size);
         this.trackLeft = new Track(game, x, y, "Track_1_A", size);
         this.tracks = [this.trackRight, this.trackLeft];
 
-        this.hull = new Hull(game, x, y, "Hull_01_"+ color, size, label);
-        this.gun = new Gun(game, x, y, "Gun_01_" + color, size);
+        this.hull = new Hull(game, x, y, "Hulls_" + color, size, label);
+        this.gun = new Gun(game, x, y, "Gun_01_" + color, size, "Gun_01.png");
 
         this.trackRight.play("track1");
         this.trackLeft.play("track1");
@@ -210,5 +211,11 @@ class Tank {
         this.trackRight.destroy();
         this.gun.destroy();
     
+    }
+
+    upgrade(type){
+        this.type = type-1;
+        this.hull.upgrade(this.type);
+        this.gun.upgrade(this.type);
     }
 }

@@ -1,11 +1,11 @@
 class Projectile extends Phaser.Physics.Matter.Sprite {
-    constructor(game, x, y, angle, size, label, level) {
-        super(game.matter.world, x, y, "Bullet", 0, {scale: {x:1, y: 1}});
+    constructor(game, x, y, angle, size, label, type) {
+        let images = ["Bullet-Mid", "Bullet-Big", "Bullet-Small", "Double-Bullet", "Sniper-Bullet", "Shotgun", "Laser", "Flamethrower"];
+        super(game.matter.world, x, y, images[type], 0, {scale: {x:1, y: 1}});
         game.add.existing(this);
-        this.explosion = this.anims.create({key:"explosion", frames: this.anims.generateFrameNumbers("Bullet", {start:0, end: 7}), frameRate:24, repeat: 0});
-        this.shot = this.anims.create({key:"shot", frames: this.anims.generateFrameNumbers("Bullet", {start:8, end: 11}), frameRate:24, repeat: 0});
+        this.explosion = this.anims.create({key:"explosion", frames: this.anims.generateFrameNumbers(images[type], {start:0, end: 7}), frameRate:24, repeat: 0});
         //this.play("shot")
-        this.setFrame(11);
+        this.setFrame(8);
 
         this.setBody({type:"rectangle", width: 15, height:28}, {label: label, chamfer: {radius: [5, 5, 5, 5] } });
         this.bounces = 0;

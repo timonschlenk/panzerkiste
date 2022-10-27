@@ -22,16 +22,29 @@ var game = new Phaser.Game(config);
 
 function preload (){
 	this.load.path = "/public/assets/";
-	this.load.image("Hull_01_A", "Hulls_Color_A/Hull_01.png");
-	this.load.image("Gun_01_A", "Weapon_Color_A/Gun_01.png");
-	this.load.image("Hull_01_B", "Hulls_Color_B/Hull_01.png");
+	this.load.spritesheet("Hulls_A", "Hulls_Color_A/Hulls.png", { frameWidth: 256, frameHeight: 256});
+	this.load.atlas("Gun_01_A", "Weapon_Color_A/guns.png", "Weapon_Color_A/guns-atlas.json");
+	this.load.spritesheet("Hulls_B", "Hulls_Color_B/Hulls.png", { frameWidth: 256, frameHeight: 256});
 	this.load.image("Gun_01_B", "Weapon_Color_B/Gun_01.png");
-	this.load.image("Hull_01_C", "Hulls_Color_C/Hull_01.png");
+	this.load.spritesheet("Hulls_C", "Hulls_Color_C/Hulls.png", { frameWidth: 256, frameHeight: 256});
 	this.load.image("Gun_01_C", "Weapon_Color_C/Gun_01.png");
-	this.load.image("Hull_01_D", "Hulls_Color_D/Hull_01.png");
+	this.load.spritesheet("Hulls_D", "Hulls_Color_D/Hulls.png", { frameWidth: 256, frameHeight: 256});
 	this.load.image("Gun_01_D", "Weapon_Color_D/Gun_01.png");
+
 	this.load.spritesheet("Health", "Effects/healthbar.png", { frameWidth: 68, frameHeight: 16});
-	this.load.spritesheet("Bullet", "Effects/bulletspritesheet.png", { frameWidth: 128, frameHeight: 128});
+
+	this.load.spritesheet("Bullet-Mid", "Effects/Bullet-Mid.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Bullet-Big", "Effects/Bullet-Big.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Bullet-Small", "Effects/Bullet-Small.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Double-Bullet", "Effects/Double-Bullet.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Sniper-Bullet", "Effects/Sniper-Bullet.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Shotgun", "Effects/Shotgun.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Laser", "Effects/Laser.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Sniper-Bullet", "Effects/Sniper-Bullet.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Flamethrowera", "Effects/Flames.png", { frameWidth: 128, frameHeight: 128});
+	
+	
+
 	this.load.spritesheet("Track_1_A", "Tracks/Track_1_A.png", { frameWidth: 42, frameHeight: 246 });
 	this.load.image("tiles", "tilesExtruded.png")
 	this.load.tilemapTiledJSON("map", "panzerkiste.json");
@@ -54,7 +67,7 @@ function create (){
 
 	pointer = this.input.activePointer;
 	cursors = this.input.keyboard.createCursorKeys();
-	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32});
+	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32, one: 49, two:50, three:51, four:52, five:53, six:54, seven:55, eight:56});
 	size = (64/256);
 
 	projectiles = new Array();
@@ -77,6 +90,24 @@ function create (){
 }
 
 function update (){
+	if(keys.one.isDown){
+		tank.upgrade(1);
+	} else if(keys.two.isDown){
+		tank.upgrade(2);
+	} else if(keys.three.isDown){
+		tank.upgrade(3);
+	} else if(keys.four.isDown){
+		tank.upgrade(4);
+	} else if(keys.five.isDown){
+		tank.upgrade(5);
+	} else if(keys.six.isDown){
+		tank.upgrade(6);
+	} else if(keys.seven.isDown){
+		tank.upgrade(7);
+	} else if(keys.eight.isDown){
+		tank.upgrade(8);
+	}
+
 	//player gets updated and player controls are being handled here
 	tankControls(this)
 	tank.update();
@@ -109,7 +140,7 @@ function tankControls(game){
 	}
 
 	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24 && projectiles.length < 5 && !tank.destroyed){
-		projectiles.push(new Projectile(game, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, level));
+		projectiles.push(new Projectile(game, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, this.tank.type));
 		counter++;
 		console.log(projectiles)
 		tank.framecount = 0;
