@@ -172,8 +172,8 @@ class Tank {
     }
 
     //called when fireing a bullet
-    getFrontOfGun(){
-        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*200*this.size, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*200*this.size}
+    getFrontOfGun(factor = 1){
+        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*200*this.size*factor, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*200*this.size*factor}
     }
 
     //reseting core parameters of tankparts to those of hull and adding the right offset

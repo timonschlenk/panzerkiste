@@ -36,12 +36,12 @@ function preload (){
 	this.load.spritesheet("Bullet-Mid", "Effects/Bullet-Mid.png", { frameWidth: 128, frameHeight: 128});
 	this.load.spritesheet("Bullet-Big", "Effects/Bullet-Big.png", { frameWidth: 128, frameHeight: 128});
 	this.load.spritesheet("Bullet-Small", "Effects/Bullet-Small.png", { frameWidth: 128, frameHeight: 128});
-	this.load.spritesheet("Double-Bullet", "Effects/Double-Bullet.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Double-Bullet", "Effects/Double.png", { frameWidth: 128, frameHeight: 128});
 	this.load.spritesheet("Sniper-Bullet", "Effects/Sniper-Bullet.png", { frameWidth: 128, frameHeight: 128});
 	this.load.spritesheet("Shotgun", "Effects/Shotgun.png", { frameWidth: 128, frameHeight: 128});
 	this.load.spritesheet("Laser", "Effects/Laser.png", { frameWidth: 128, frameHeight: 128});
-	this.load.spritesheet("Sniper-Bullet", "Effects/Sniper-Bullet.png", { frameWidth: 128, frameHeight: 128});
-	this.load.spritesheet("Flamethrowera", "Effects/Flames.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Sniper-Bullet", "Effects/Sniper.png", { frameWidth: 128, frameHeight: 128});
+	this.load.spritesheet("Flamethrower", "Effects/Flames.png", { frameWidth: 256, frameHeight: 256});
 	
 	
 
@@ -59,7 +59,6 @@ function create (){
 	tileset = map.addTilesetImage("tiles1", "tiles", 32, 32, 1, 2);
 	level = map.createLayer("level", tileset, 0, 0);
 	map.setCollisionByProperty({ collision: true });
-	//this.matter.world.a(level);
 
 	shapes = this.cache.json.get('shapes');
 	addBorders(this);
@@ -106,6 +105,8 @@ function update (){
 		tank.upgrade(7);
 	} else if(keys.eight.isDown){
 		tank.upgrade(8);
+		projectiles = [];
+		counter = 0;
 	}
 
 	//player gets updated and player controls are being handled here
@@ -118,6 +119,12 @@ function update (){
 		bot.update();
 		bot.updateGunAngle(false, {x: tank.x, y: tank.y});
 	})
+
+	if(tank.type === 7 && projectiles.length !== 0){
+		projectiles[0].x = tank.getFrontOfGun(1.9).x;
+		projectiles[0].y = tank.getFrontOfGun(1.9).y;
+		projectiles[0].angle = tank.gun.angle;
+	}
 }
 
 function tankControls(game){
@@ -138,14 +145,30 @@ function tankControls(game){
 	} if ((cursors.down.isDown || keys.s.isDown)&&!(cursors.up.isDown || keys.w.isDown)){
 		tank.moveBackward();
 	}
+	if (tank.type === 0 || tank.type === 1 || tank.type === 2 || tank.type === 4){
+		if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24 && projectiles.length < 5 && !tank.destroyed){
+			projectiles.push(new Projectile(game, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, this.tank.type, ));
+			counter++;
+			tank.framecount = 0;
+		}
+	} else if (tank.type === 3){
 
-	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= 24 && projectiles.length < 5 && !tank.destroyed){
-		projectiles.push(new Projectile(game, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, this.tank.type));
-		counter++;
-		console.log(projectiles)
-		tank.framecount = 0;
+	} else if (tank.type === 5){
+
+	} else if (tank.type === 6){
+
+	} else if (tank.type === 7){
+		if ((keys.space.isDown || pointer.isDown) && !tank.destroyed){
+			if (projectiles.length === 0){
+				projectiles.push(new Projectile(game, tank.getFrontOfGun(1.9).x, tank.getFrontOfGun(1.9).y, tank.gun.angle, size, `projectile_${counter}`, this.tank.type, 1));
+				console.log(projectiles)
+			}
+		} else {
+			if (projectiles.length !== 0){
+				projectiles[0].destroy();
+			}
+		}
 	}
-
 	for (i = 0; i < projectiles.length; i++){
 		if(!projectiles[i].active){
 			projectiles.splice(i,1);
