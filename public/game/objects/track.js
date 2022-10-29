@@ -20,7 +20,7 @@ class Track extends Phaser.GameObjects.Sprite {
             scale: 0.2,
             quantity: 1,
             frequency: 10,
-            lifespan: {max: 800, min: 500},
+            lifespan: {max: 800, min: 50},
             alpha: { start: 0.5, end: 0 }
         });
 

@@ -92,7 +92,7 @@ class Tank {
             }
             this.healthbar.setFrame(this.hull.body.health-1);
             this.healthOld = this.hull.body.health;
-            if(this.hull.body.health === 0){
+            if(this.hull.body.health <= 0){
                 this.destroy();
                 this.destroyed = true;
             }
@@ -172,8 +172,8 @@ class Tank {
     }
 
     //called when fireing a bullet
-    getFrontOfGun(factor = 1){
-        return {x: this.gun.x + Math.sin(this.gun.angle*Math.PI/180)*200*this.size*factor, y: this.gun.y - Math.cos(this.gun.angle*Math.PI/180)*200*this.size*factor}
+    getFrontOfGun(factor = 1, offset = 0){
+        return {x: this.gun.x + Math.sin((this.gun.angle+offset)*Math.PI/180)*200*this.size*factor, y: this.gun.y - Math.cos((this.gun.angle+offset)*Math.PI/180)*200*this.size*factor}
     }
 
     //reseting core parameters of tankparts to those of hull and adding the right offset
