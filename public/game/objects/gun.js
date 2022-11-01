@@ -5,7 +5,6 @@ class Gun extends Phaser.GameObjects.Sprite {
         this.setOrigin(0.5, 0.8);
         this.size = size;
         this.setScale(size*1.1, size*1.1);
-        this.explosion = this.anims.create({key:"explosion", frames: this.anims.generateFrameNumbers("Bullet", {start:0, end: 7}), frameRate:24, repeat: 0});
     }
 
     upgrade(type){

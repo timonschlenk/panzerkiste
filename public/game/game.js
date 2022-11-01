@@ -16,7 +16,7 @@ var config = {
 	}
 };
 
-var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles, border, shapes, projectilesBots, counterBots;
+var cursors, keys, pointer, tank, size, map, tileset, backgroundLayer, collisionLayer, tanks, projectiles, border, shapes, flamethrower;
 var game = new Phaser.Game(config);
 
 
@@ -67,6 +67,7 @@ function create (){
 	keys = this.input.keyboard.addKeys({ w: 87, a: 65, s: 83 ,d: 68, space: 32, one: 49, two:50, three:51, four:52, five:53, six:54, seven:55, eight:56});
 
 	projectiles = new Array();
+	flamethrower = new Array();
 	counter = 0;
 
 	tank = new Tank(this, 1000, 400, size, "A", "player");
@@ -112,14 +113,14 @@ function tankControls(){
 
 function shooting(game){
 	let number = [5, 1, 7, 4, 0, 10];
-	let framecount = [24, 72, 24, 24, 0, 24];
+	let framecount = [24, 72, 36, 24, 0, 24];
 	if ((keys.space.isDown || pointer.isDown) && tank.framecount >= framecount[tank.type] && projectiles.length < number[tank.type] && !tank.destroyed){
 		if (tank.type === 0 || tank.type === 1 || tank.type === 2 || tank.type === 3){
 			projectiles.push(new Projectile(game, tank.getFrontOfGun().x, tank.getFrontOfGun().y, tank.gun.angle, size, `projectile_${counter}`, tank.type));
 			counter++;
 			tank.framecount = 0;
 		} else if (tank.type === 4){
-	
+	12
 		} else if (tank.type === 5){
 			for (i = -1; i < 2; i+=2){
 				projectiles.push(new Projectile(game, tank.getFrontOfGun(1,i*5).x, tank.getFrontOfGun(1,i*5).y, tank.gun.angle+i*3, size, `projectile_${counter}`, tank.type));
@@ -127,9 +128,26 @@ function shooting(game){
 			}
 			tank.framecount = 0;
 		} else if (tank.type === 6){
-	
-		} else if (tank.type === 7){
-	
+			
+		} 
+		for (i = 0; i < projectiles.length; i++){
+			if(!projectiles[i].active){
+				projectiles.splice(i,1);
+			}
+		}
+	}
+	if (tank.type === 7){
+		if ((keys.space.isDown || pointer.isDown) && !tank.destroyed){
+			if(flamethrower.length === 0){
+				flamethrower.push(new Flame(game, tank.getFrontOfGun(1.9).x, tank.getFrontOfGun(1.9).y, tank.gun.angle, size, `flames`, 1));
+			}
+			flamethrower[0].x = tank.getFrontOfGun(1.9).x;
+			flamethrower[0].y = tank.getFrontOfGun(1.9).y;
+			flamethrower[0].angle = tank.gun.angle;
+			
+		} else if (flamethrower.length !== 0){
+			flamethrower[0].destroy();
+			flamethrower = [];
 		}
 	}
 

@@ -2,7 +2,7 @@ class Projectile extends Phaser.Physics.Matter.Sprite {
     constructor(game, x, y, angle, size, label, type) {
         let tankTypeData = [{bounces: 2, velocity: 1, damage: 1, number:1, width:15, height:28, chamfer: [5,5,5,5]},
             {bounces: 0, velocity: 2.5, damage: 2, width:15, height:48, chamfer:[5,5,5,5]},
-            {bounces: 5, velocity: 1, damage: 2, width:25, height:48, chamfer:[8,8,8,8]},
+            {bounces: 4, velocity: 1, damage: 2, width:25, height:48, chamfer:[8,8,8,8]},
             {bounces: 2, velocity: 1, damage: 1, width:10, height:18, chamfer:[2,2,2,2]},
             {},
             {bounces: 2, velocity: 1, damage: 1, width:17, height:30, chamfer:[5,5,5,5]}];

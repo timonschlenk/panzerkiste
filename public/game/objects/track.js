@@ -9,7 +9,6 @@ class Track extends Phaser.GameObjects.Sprite {
         this.framerateChange = 0;
 
         this.track1 = this.anims.create({key:"track1", frames: this.anims.generateFrameNumbers("Track_1_A"), frameRate:24, repeat: -1});
-        this.explosion = this.anims.create({key:"explosion", frames: this.anims.generateFrameNumbers("Bullet", {start:0, end: 7}), frameRate:24, repeat: 0});
 
         this.particles = game.add.particles('tiretracks');
 
